@@ -148,7 +148,17 @@ namespace ClientWPF
                 // Open document 
                 string filename = dlg.FileName;
 
-                string productJSON = File.ReadAllText(dlg.FileName);
+                using (StreamReader r = new StreamReader(filename))
+                {
+                    string json = r.ReadToEnd();
+                    List<ProductDTO> items = JsonConvert.DeserializeObject<List<ProductDTO>>(json);
+
+                    String productJSON = JsonConvert.SerializeObject(items);
+
+                    String output = ConnectServer(server, port, "importProduct", productJSON);
+                }
+
+                Reload();
             }
         }
     }

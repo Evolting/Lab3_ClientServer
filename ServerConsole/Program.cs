@@ -3,6 +3,7 @@ using System.Net;
 using ServerConsole.Entity;
 using Newtonsoft.Json;
 using Microsoft.EntityFrameworkCore;
+using System.Text.RegularExpressions;
 
 int count = 0;
 string host = "127.0.0.1";
@@ -36,7 +37,6 @@ static void ProcessClient(object parameter)
     while ((count = stream.Read(bytes, 0, bytes.Length)) != 0)
     {
         data = System.Text.Encoding.ASCII.GetString(bytes, 0, count);
-        Console.WriteLine($"Received: {data} at {DateTime.Now}");
         string[] words = data.Split('/');
         switch (words[0])
         {
@@ -90,18 +90,12 @@ static void ProcessClient(object parameter)
                 break;
             case "deleteProduct":
                 context = new NorthwindContext();
-                 
-                Console.WriteLine("Start");
                 string requestDataDelete = words[1];
 
                 int deleteId = Int32.Parse(requestDataDelete);
 
-                Console.WriteLine("First");
-
                 List<OrderDetail> orderDetails = context.OrderDetails.Where(od => od.ProductId == deleteId).ToList();
                 context.OrderDetails.RemoveRange(orderDetails);
-
-                Console.WriteLine("Second");
 
                 Product deleteProduct = context.Products.FirstOrDefault(p => p.ProductId == deleteId);
                 context.Products.Remove(deleteProduct);
@@ -109,9 +103,26 @@ static void ProcessClient(object parameter)
                 context.SaveChanges();
 
                 //logic request -> respone.
-                Console.WriteLine("Done");
                 Byte[] msg5 = System.Text.Encoding.ASCII.GetBytes("Success");
                 stream.Write(msg5, 0, msg5.Length);
+                break;
+            case "importProduct":
+                context = new NorthwindContext();
+                string importJSON = words[1];
+
+                List<Product> importProducts = JsonConvert.DeserializeObject<List<Product>>(importJSON);
+
+                foreach (var p in importProducts)
+                {
+                    p.ProductId = 0;
+
+                    context.Products.Add(p);
+                    context.SaveChanges();
+                }
+
+                //logic request -> respone.
+                Byte[] msg6 = System.Text.Encoding.ASCII.GetBytes("Success");
+                stream.Write(msg6, 0, msg6.Length);
                 break;
         }
     }

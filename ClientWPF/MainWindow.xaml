@@ -106,22 +106,27 @@
                         <Button x:Name="btnLoad"
                             Margin="10"
                             Width="80"
+                            Height="30"
                             Content="Load" Click="btnLoad_Click"/>
                         <Button x:Name="btnInsert"
                             Margin="10"
                             Width="80"
+                            Height="30"
                             Content="Insert" Click="btnInsert_Click"/>
                         <Button x:Name="btnUpdate"
                             Margin="10"
                             Width="80"
+                            Height="30"
                             Content="Update" Click="btnUpdate_Click" />
                         <Button x:Name="btnDelete"
                             Margin="10"
                             Width="80"
+                            Height="30"
                             Content="Delete" Click="btnDelete_Click" />
                         <Button x:Name="btnImport"
                             Margin="10"
                             Width="80"
+                            Height="30"
                             Content="Import" Click="btnImport_Click"/>
                     </StackPanel>
                 </StackPanel>
